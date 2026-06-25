@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=2.0">
+    <title>pg模拟器 · 页面口袋软件</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans SC", sans-serif;
+            background: linear-gradient(145deg, #fcedda 0%, #f9d9b8 50%, #f1cba0 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 2rem 1.5rem 3rem;
+            color: #3a2a1a;
+            line-height: 1.7;
+        }
+
+        .page-wrapper {
+            max-width: 1100px;
+            width: 100%;
+        }
+
+        /* 顶部导航 */
+        .top-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255, 245, 235, 0.75);
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+            border-radius: 60px;
+            padding: 0.75rem 1.8rem;
+            margin-bottom: 3rem;
+            box-shadow: 0 6px 18px rgba(150, 90, 40, 0.10);
+            border: 1px solid rgba(255, 220, 185, 0.4);
+        }
+
+        .nav-brand {
+            font-weight: 600;
+            font-size: 1.3rem;
+            letter-spacing: 0.02em;
+            color: #6b3f1c;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .nav-brand span {
+            background: #b87a4b;
+            color: #fff9f0;
+            font-size: 0.7rem;
+            padding: 2px 12px;
+            border-radius: 40px;
+            font-weight: 400;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1.2rem;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #4c321e;
+            font-weight: 450;
+            font-size: 0.95rem;
+            padding: 0.3rem 0.6rem;
+            border-radius: 30px;
+            transition: all 0.2s ease;
+        }
+
+        .nav-links a:hover {
+            background: #ddb186;
+            color: #2f1d0e;
+        }
+
+        /* 卡片容器 */
+        .card {
+            background: #fffaf5;
+            border-radius: 40px;
+            padding: 2.2rem 2.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 12px 30px rgba(130, 75, 35, 0.08);
+            border: 1px solid rgba(255, 235, 215, 0.7);
+            transition: box-shadow 0.25s;
+        }
+
+        .card:hover {
+            box-shadow: 0 16px 40px rgba(140, 85, 40, 0.10);
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: 530;
+            margin-bottom: 1rem;
+            color: #4f311b;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card-title .emoji-tag {
+            font-size: 1.6rem;
+            line-height: 1;
+        }
+
+        .card p {
+            margin-bottom: 1rem;
+        }
+
+        .card p:last-child {
+            margin-bottom: 0;
+        }
+
+        /* 按钮感的链接 */
+        .btn-link {
+            display: inline-block;
+            background: #f5e3d0;
+            color: #3e2817;
+            border-radius: 60px;
+            padding: 0.4rem 1.6rem;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            border: 1px solid transparent;
+            font-size: 0.95rem;
+            box-shadow: 0 2px 6px rgba(160, 100, 50, 0.04);
+        }
+
+        .btn-link:hover {
+            background: #eaceb2;
+            border-color: #c99d75;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 18px rgba(180, 115, 55, 0.12);
+        }
+
+        .btn-link-outline {
+            background: transparent;
+            border: 1px solid #cba77e;
+            color: #3f2b19;
+        }
+
+        .btn-link-outline:hover {
+            background: #f0ddc8;
+            border-color: #b48359;
+        }
+
+        /* 三个场景模块：网格 */
+        .scenes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        .scene-card {
+            background: #fbf4eb;
+            padding: 1.6rem 1.2rem;
+            border-radius: 28px;
+            border: 1px solid #ecdbc8;
+            transition: all 0.2s;
+        }
+
+        .scene-card h3 {
+            font-size: 1.2rem;
+            font-weight: 520;
+            margin-bottom: 0.5rem;
+            color: #4f311b;
+        }
+
+        .scene-card p {
+            font-size: 0.95rem;
+            color: #4f3b2a;
+        }
+
+        /* 常见说明 / FAQ 摘要 */
+        .faq-item {
+            padding: 0.8rem 0;
+            border-bottom: 1px solid #f0e2d2;
+        }
+
+        .faq-item:last-child {
+            border-bottom: none;
+        }
+
+        .faq-question {
+            font-weight: 530;
+            color: #482f1b;
+            margin-bottom: 0.1rem;
+        }
+
+        .faq-answer {
+            color: #5e4735;
+            font-size: 0.95rem;
+        }
+
+        /* 页脚 */
+        .footer-note {
+            margin-top: 2.5rem;
+            text-align: center;
+            font-size: 0.9rem;
+            color: #705641;
+            border-top: 1px solid #e6cfbb;
+            padding-top: 1.8rem;
+        }
+
+        .footer-note a {
+            color: #4d311d;
+            text-decoration: underline wavy #c09d7a 1px;
+            text-underline-offset: 4px;
+        }
+
+        .footer-note a:hover {
+            color: #2b1a0d;
+            text-decoration-color: #9f744e;
+        }
+
+        /* 响应式 */
+        @media (max-width: 640px) {
+            body {
+                padding: 1rem 0.8rem 2rem;
+            }
+
+            .top-nav {
+                flex-direction: column;
+                gap: 0.6rem;
+                padding: 0.8rem 1rem;
+                border-radius: 40px;
+            }
+
+            .nav-links {
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 0.8rem;
+            }
+
+            .card {
+                padding: 1.6rem 1.2rem;
+                border-radius: 30px;
+            }
+
+            .card-title {
+                font-size: 1.3rem;
+            }
+
+            .scenes-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (min-width: 768px) and (max-width: 1024px) {
+            .scenes-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        /* 内联嵌入链接的样式 */
+        .inline-link {
+            color: #854f28;
+            text-decoration: none;
+            font-weight: 480;
+            border-bottom: 2px solid #dbb896;
+            transition: border-color 0.2s, color 0.2s;
+        }
+
+        .inline-link:hover {
+            color: #3b2313;
+            border-bottom-color: #a57146;
+        }
+    </style>
+</head>
+<body>
+<div class="page-wrapper">
+
+    <!-- 导航 -->
+    <nav class="top-nav">
+        <div class="nav-brand">
+            🍂 页面口袋 <span>轻导航</span>
+        </div>
+        <div class="nav-links">
+            <a href="#intro">介绍</a>
+            <a href="#scenes">场景</a>
+            <a href="#faq">说明</a>
+            <a href="https://page-pocketgamessoft.com" class="btn-link btn-link-outline" style="padding: 0.2rem 1.4rem;">pg模拟器</a>
+        </div>
+    </nav>
+
+    <!-- Hero 区域 / 核心介绍 -->
+    <section class="card" id="intro">
+        <div class="card-title">
+            <span class="emoji-tag">🕹️</span> 关于 pg模拟器
+        </div>
+        <p>
+            无论你是在寻找一个运行稳定的游戏环境，还是想回顾那些经典掌机作品，
+            一个可靠的前端入口能让整个过程从容许多。很多朋友提到 <a href="https://page-pocketgamessoft.com" class="inline-link">pg模拟器</a>
+            时，往往更在意它能否提供流畅的基础体验和清晰的引导。这个页面正是从这些角度出发，
+            为你整理了一份轻量的说明索引。
+        </p>
+        <p>
+            我们并不想堆砌功能列表，而是希望当你需要了解某一款模拟工具的基本定位、适用平台或常见设置时，
+            能在这里找到一个温和的起点。下面的几个模块分别对应了不同的使用场景，你可以根据自己的节奏慢慢翻阅。
+        </p>
+        <p style="margin-top: 1.2rem;">
+            <a href="https://page-pocketgamessoft.com" class="btn-link">pg模拟器</a>
+            <span style="margin-left: 1rem; font-size: 0.9rem; color: #6f5540;">—— 页面口袋的稳定访问入口</span>
+        </p>
+    </section>
+
+    <!-- 三个场景模块 -->
+    <section class="card" id="scenes">
+        <div class="card-title">
+            <span class="emoji-tag">📌</span> 常见使用场景
+        </div>
+        <div class="scenes-grid">
+            <div class="scene-card">
+                <h3>📱 移动端快速调出</h3>
+                <p>在手机或平板上，通过浏览器保持页面书签，即可随时进入模拟环境。无需反复下载安装包，界面适配良好，适合通勤间隙小玩一把。</p>
+            </div>
+            <div class="scene-card">
+                <h3>🖥️ 桌面端辅助参考</h3>
+                <p>许多玩家习惯在电脑上打开说明页，对照按键设置或存档路径。<a href="https://page-pocketgamessoft.com" class="inline-link">pg模拟器</a>
+                的页面结构直观，适合边读边操作，减少切换成本。</p>
+            </div>
+            <div class="scene-card">
+                <h3>📚 资源整理与收藏</h3>
+                <p>如果你同时关注多个模拟器项目，可以把此页当作一个分类书签。清晰的卡片式布局便于日常快速定位，也方便分享给刚入门的朋友。</p>
+            </div>
+        </div>
+        <p style="font-size: 0.95rem; margin-top: 1.3rem; color: #5c4533;">
+            💡 每个场景都围绕着“稳定打开、顺畅阅读”展开，没有复杂的隐藏步骤。
+        </p>
+    </section>
+
+    <!-- 常见说明 (FAQ 摘要) -->
+    <section class="card" id="faq">
+        <div class="card-title">
+            <span class="emoji-tag">❔</span> 一些你可能想了解的
+        </div>
+
+        <div class="faq-item">
+            <div class="faq-question">▸ 这个页面和 pg模拟器 是什么关系？</div>
+            <div class="faq-answer">
+                此页是 <a href="https://page-pocketgamessoft.com" class="inline-link">pg模拟器</a> 的轻导航介绍页，
+                旨在提供稳定、清晰的说明索引，不附加任何第三方推广内容。你可以把它看作一个温和的说明书性质的入口。
+            </div>
+        </div>
+        <div class="faq-item">
+            <div class="faq-question">▸ 使用前需要做哪些准备？</div>
+            <div class="faq-answer">
+                通常只需一个现代浏览器（Chrome、Safari、Edge 等），无需额外插件。如果遇到页面加载或显示问题，可尝试刷新或检查网络连接。
+            </div>
+        </div>
+        <div class="faq-item">
+            <div class="faq-question">▸ 是否包含具体游戏文件的下载？</div>
+            <div class="faq-answer">
+                本页面不提供任何游戏文件或 BIOS 资源，仅作为模拟器入口和操作说明的参考。请自行确保拥有合法备份。
+            </div>
+        </div>
+        <div class="faq-item">
+            <div class="faq-question">▸ 页面会频繁变动吗？</div>
+            <div class="faq-answer">
+                我们尽量保持内容稳定，如果未来有必要的调整，会通过温柔的更新方式来呈现，避免突然的大幅改动造成困惑。
+            </div>
+        </div>
+    </section>
+
+    <!-- 一个小提示模块 (额外) -->
+    <div class="card" style="background: #f9eee3; padding: 1.4rem 2rem;">
+        <p style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+            <span style="font-size: 1.3rem;">☕</span>
+            <span>如果你只是需要一个安静的起点，不妨把 <a href="https://page-pocketgamessoft.com" class="inline-link">pg模拟器</a> 
+            加入浏览器书签栏。每次打开时，它都会以同样的面貌迎接你，没有弹窗干扰。</span>
+        </p>
+    </div>
+
+    <!-- 页脚 -->
+    <footer class="footer-note">
+        <p>基于页面口袋的轻量导航 · 内容温和· 非官方说明页</p>
+        <p style="margin-top: 0.4rem;">
+            <a href="https://page-pocketgamessoft.com">pg模拟器</a> 
+            <span style="margin: 0 0.6rem; color: #b18f73;">/</span> 
+            <span>仅供个人参考</span>
+        </p>
+    </footer>
+
+</div>
+</body>
+</html>
